@@ -6,12 +6,12 @@
 %token <int> BYTE
 %token <string> ID
 %token EOF PLUS MINUS MUL DIV
-%token LPAREN RPAREN
+%token LPAREN RPAREN SEMICOLON
 %token EQ DEQ
 %token TRUE FALSE
 %token LET IN
 
-%left IN
+%left IN SEMICOLON
 %left PLUS MINUS
 %left MUL DIV
 %nonassoc DEQ
@@ -33,6 +33,8 @@ var_decl:
     { DeclareVar (v,e,$startpos) }
 
 exp:
+  | e1=exp SEMICOLON e2=exp
+    { LetExp (Symbol.symbol "_", e1, e2, $startpos) }
   | INT
     { IntExp ($1,$startpos) }
   | BYTE
