@@ -46,17 +46,17 @@ exp:
   | id
     { VarExp ($1,$startpos) }
   | MINUS e=exp %prec UMINUS
-    { OpExp (SubOp, IntExp (0,$startpos),e,$startpos) }
+    { CallExp (Symbol.symbol "-", [IntExp (0,$startpos);e],$startpos) }
   | left=exp PLUS right=exp
-    { OpExp (AddOp,left,right,$startpos) }
+    { CallExp (Symbol.symbol "+",[left;right],$startpos) }
   | left=exp MINUS right=exp
-    { OpExp (SubOp,left,right,$startpos) }
+    { CallExp (Symbol.symbol "-",[left;right],$startpos) }
   | left=exp MUL right=exp
-    { OpExp (MulOp,left,right,$startpos) }
+    { CallExp (Symbol.symbol "*",[left;right],$startpos) }
   | left=exp DIV right=exp
-    { OpExp (DivOp,left,right,$startpos) }
+    { CallExp (Symbol.symbol "/",[left;right],$startpos) }
   | left=exp DEQ right=exp
-    { OpExp (EqOp,left,right,$startpos) }
+    { CallExp (Symbol.symbol "==",[left;right],$startpos) }
   | LPAREN RPAREN
     { NilExp ($startpos) }
   | LPAREN e=exp RPAREN

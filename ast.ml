@@ -11,45 +11,38 @@ type prog = decl list
    | ByteExp of int*pos
    | BoolExp of bool*pos
    | VarExp of sym*pos
-   | OpExp of op*exp*exp*pos
+   | CallExp of sym*exp list*pos
    | LetExp of sym*exp*exp*pos
- and op = AddOp | SubOp | MulOp | DivOp | EqOp
 
 let rec pprint_exp = function
   | NilExp (pos) ->
-     Printf.printf "nil"
+     Printf.sprintf "nil"
   | IntExp (num,pos) ->
-     Printf.printf "%d" num
+     Printf.sprintf "%d" num
   | ByteExp (num,pos) ->
-     Printf.printf "%db" num
+     Printf.sprintf "%db" num
   | BoolExp (true,pos) ->
-     Printf.printf "true"
+     Printf.sprintf "true"
   | BoolExp (false,pos) ->
-     Printf.printf "false"
+     Printf.sprintf "false"
   | VarExp (var,pos) ->
-     Printf.printf "%s" (Symbol.name var)
-  | OpExp (op,left,right,pos) ->
-     Printf.printf "(";
-     pprint_exp left;
-     Printf.printf (match op with
-		    | AddOp -> "+"
-		    | SubOp -> "-"
-		    | MulOp -> "*"
-		    | DivOp -> "/"
-		    | EqOp -> "==");
-     pprint_exp right;
-     Printf.printf ")"
+     Printf.sprintf "%s" (Symbol.name var)
+  | CallExp (name,args,pos) ->
+     let args = String.concat ","
+			      (List.map (fun arg ->
+					 "("^pprint_exp arg^")") args) in
+     Printf.sprintf "%s(%s)" (Symbol.name name) args
   | LetExp (var,exp,body,pos) ->
-     Printf.printf "let %s=" (Symbol.name var);
-     pprint_exp exp;
-     Printf.printf " in ";
-     pprint_exp body
+     Printf.sprintf "let %s=%s in %s"
+		    (Symbol.name var)
+		    (pprint_exp exp)
+		    (pprint_exp body)
 
 let pprint_decl = function
   | DeclareVar (var,exp,pos) ->
-     Printf.printf "let %s=" (Symbol.name var);
-     pprint_exp exp;
-     print_newline ()
+     Printf.printf "let %s=%s\n"
+		   (Symbol.name var)
+		   (pprint_exp exp)
 
 let pprint prog =
   List.iter pprint_decl prog
