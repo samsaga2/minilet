@@ -29,15 +29,15 @@ let rec pprint_exp = function
      Printf.sprintf "false"
   | VarExp (var,pos) ->
      Printf.sprintf "%s" (Symbol.name var)
-  | CallExp (exp,exps,pos) ->
-     Printf.sprintf "%s(%s)" (pprint_exp exp) (pprint_exps exps)
+  | CallExp (fn,exps,pos) ->
+     Printf.sprintf "(%s %s)" (pprint_exp fn) (pprint_exps exps)
   | LetExp (var,exp,body,pos) ->
      Printf.sprintf "let %s = %s in %s"
 		    (Symbol.name var)
 		    (pprint_exp exp)
 		    (pprint_exp body)
   | LambdaExp (args,exp,pos) ->
-     Printf.sprintf "fun %s -> %s"
+     Printf.sprintf "(fun %s -> %s)"
 		    (pprint_syms args)
 		    (pprint_exp exp)
 

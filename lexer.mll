@@ -33,7 +33,6 @@ rule token = parse
   | "/"                                 { DIV }
   | "("                                 { LPAREN }
   | ")"                                 { RPAREN }
-  | ";"                                 { SEMICOLON }
   | "=="				{ DEQ }
   | "="					{ EQ }
   | "true"				{ TRUE }

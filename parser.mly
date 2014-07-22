@@ -7,14 +7,14 @@
 %token <int> BYTE
 %token <string> ID
 %token EOF PLUS MINUS MUL DIV
-%token LPAREN RPAREN SEMICOLON
+%token LPAREN RPAREN
 %token EQ DEQ
 %token TRUE FALSE
 %token LET IN
 %token FUN ARROW
 
 %nonassoc ARROW
-%left IN SEMICOLON
+%nonassoc IN
 %left PLUS MINUS
 %left MUL DIV
 %nonassoc DEQ
@@ -29,16 +29,14 @@ program:
     { l }
 
 decl:
-  | LET v=id EQ e=exp
+  | LET v=id EQ e=exp2
     { GlobalVar (v,e,$startpos) }
-  | LET v=id args=nonempty_list(id) EQ e=exp
+  | LET v=id args=nonempty_list(id) EQ e=exp2
     { GlobalVar (v,LambdaExp (args,e,$startpos),$startpos) }
-  | LET v=id LPAREN RPAREN EQ e=exp
+  | LET v=id LPAREN RPAREN EQ e=exp2
     { GlobalVar (v,LambdaExp ([],e,$startpos),$startpos) }
 
 exp:
-  | e1=exp SEMICOLON e2=exp
-    { LetExp (S.symbol "_", e1, e2, $startpos) }
   | INT
     { IntExp ($1,$startpos) }
   | BYTE
@@ -49,26 +47,40 @@ exp:
     { BoolExp (false,$startpos) }
   | id
     { VarExp ($1,$startpos) }
-  | MINUS e=exp %prec UMINUS
-    { CallExp (VarExp (S.symbol "-", $startpos), [IntExp (0,$startpos);e],$startpos) }
-  | left=exp PLUS right=exp
-    { CallExp (VarExp (S.symbol "+", $startpos), [left;right],$startpos) }
-  | left=exp MINUS right=exp
-    { CallExp (VarExp (S.symbol "-", $startpos), [left;right],$startpos) }
-  | left=exp MUL right=exp
-    { CallExp (VarExp (S.symbol "*", $startpos), [left;right],$startpos) }
-  | left=exp DIV right=exp
-    { CallExp (VarExp (S.symbol "/", $startpos), [left;right],$startpos) }
-  | left=exp DEQ right=exp
-    { CallExp (VarExp (S.symbol "==", $startpos),[left;right],$startpos) }
+  | LPAREN e=exp2 RPAREN
+    { e }
+
+exp2:
+  | MINUS e=exp2 %prec UMINUS
+    { CallExp ((VarExp (S.symbol "-",$startpos)),
+	       [IntExp (0,$startpos);e], $startpos) }
+  | left=exp2 PLUS right=exp2
+    { CallExp ((VarExp (S.symbol "+",$startpos)),
+	       [left;right], $startpos) }
+  | left=exp2 MINUS right=exp2
+    { CallExp ((VarExp (S.symbol "-",$startpos)),
+	       [left;right],$startpos) }
+  | left=exp2 MUL right=exp2
+    { CallExp ((VarExp (S.symbol "*",$startpos)),
+	       [left;right],$startpos) }
+  | left=exp2 DIV right=exp2
+    { CallExp ((VarExp (S.symbol "/",$startpos)),
+	       [left;right],$startpos) }
+  | left=exp2 DEQ right=exp2
+    { CallExp ((VarExp (S.symbol "==",$startpos)),
+	       [left;right],$startpos) }
+  | LET v=id EQ e=exp2 IN b=exp2
+    { LetExp (v,e,b,$startpos) }
+  | FUN args=list(id) ARROW e=exp2
+    { LambdaExp (args,e,$startpos) }
   | LPAREN RPAREN
     { NilExp ($startpos) }
-  | LPAREN e=exp RPAREN
-    { e }
-  | LET v=id EQ e=exp IN b=exp
-    { LetExp (v,e,b,$startpos) }
-  | FUN args=list(id) ARROW e=exp
-    { LambdaExp (args,e,$startpos) }
+  | exp LPAREN RPAREN
+    { CallExp ($1,[],$startpos) }
+  | exp nonempty_list(exp)
+    { CallExp ($1,$2,$startpos) }
+  | exp
+    { $1 }
 
 id:
   | ID
