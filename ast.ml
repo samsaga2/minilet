@@ -1,18 +1,21 @@
 type sym = Symbol.t
-type typ = Symbol.t
 type pos = Lexing.position
+
 
 type prog = decl list
  and decl =
-   | DeclareVar of sym*exp*pos
+   | GlobalVar of sym*exp*pos
+   | GlobalFun of sym*sym list*exp*pos
  and exp =
    | NilExp of pos
    | IntExp of int*pos
    | ByteExp of int*pos
    | BoolExp of bool*pos
    | VarExp of sym*pos
-   | CallExp of sym*exp list*pos
+   | CallExp of exp*exp list*pos
    | LetExp of sym*exp*exp*pos
+   | LambdaExp of sym list*exp*pos
+
 
 let rec pprint_exp = function
   | NilExp (pos) ->
@@ -27,22 +30,40 @@ let rec pprint_exp = function
      Printf.sprintf "false"
   | VarExp (var,pos) ->
      Printf.sprintf "%s" (Symbol.name var)
-  | CallExp (name,args,pos) ->
-     let args = String.concat ","
-			      (List.map (fun arg ->
-					 "("^pprint_exp arg^")") args) in
-     Printf.sprintf "%s(%s)" (Symbol.name name) args
+  | CallExp (exp,exps,pos) ->
+     Printf.sprintf "%s(%s)" (pprint_exp exp) (pprint_exps exps)
   | LetExp (var,exp,body,pos) ->
-     Printf.sprintf "let %s=%s in %s"
+     Printf.sprintf "let %s = %s in %s"
 		    (Symbol.name var)
 		    (pprint_exp exp)
 		    (pprint_exp body)
+  | LambdaExp (args,exp,pos) ->
+     Printf.sprintf "fun %s -> %s"
+		    (pprint_syms args)
+		    (pprint_exp exp)
+
+and pprint_exps exps =
+  String.concat "," (List.map (fun exp -> "("^pprint_exp exp^")") exps)
+
+and pprint_syms syms =
+  String.concat " " (List.map Symbol.name syms)
+
 
 let pprint_decl = function
-  | DeclareVar (var,exp,pos) ->
-     Printf.printf "let %s=%s\n"
+  | GlobalVar (var,exp,pos) ->
+     Printf.printf "let %s = %s\n"
 		   (Symbol.name var)
 		   (pprint_exp exp)
+  | GlobalFun (var,[],exp,pos) ->
+     Printf.printf "let %s () = %s\n"
+		   (Symbol.name var)
+		   (pprint_exp exp)
+  | GlobalFun (var,args,exp,pos) ->
+     Printf.printf "let %s %s = %s\n"
+		   (Symbol.name var)
+		   (String.concat " " (List.map Symbol.name args))
+		   (pprint_exp exp)
+
 
 let pprint prog =
   List.iter pprint_decl prog

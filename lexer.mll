@@ -40,6 +40,8 @@ rule token = parse
   | "false"				{ FALSE }
   | "let"                               { LET }
   | "in"                                { IN }
+  | "fun"                               { FUN }
+  | "->"                                { ARROW }
   | alpha (alpha|digit|"_")* as v	{ ID v }
   | digit+ as i "b"			{ BYTE (int_of_string i) }
   | digit+ as i				{ INT (int_of_string i) }
