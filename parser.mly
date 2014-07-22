@@ -31,6 +31,8 @@ program:
 decl:
   | LET v=id EQ e=exp
     { GlobalVar (v,e,$startpos) }
+  | LET v=id args=nonempty_list(id) EQ e=exp
+    { GlobalVar (v,LambdaExp (args,e,$startpos),$startpos) }
   | LET v=id LPAREN RPAREN EQ e=exp
     { GlobalVar (v,LambdaExp ([],e,$startpos),$startpos) }
 
