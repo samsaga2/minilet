@@ -5,7 +5,6 @@ type pos = Lexing.position
 type prog = decl list
  and decl =
    | GlobalVar of sym*exp*pos
-   | GlobalFun of sym*sym list*exp*pos
  and exp =
    | NilExp of pos
    | IntExp of int*pos
@@ -53,15 +52,6 @@ let pprint_decl = function
   | GlobalVar (var,exp,pos) ->
      Printf.printf "let %s = %s\n"
 		   (Symbol.name var)
-		   (pprint_exp exp)
-  | GlobalFun (var,[],exp,pos) ->
-     Printf.printf "let %s () = %s\n"
-		   (Symbol.name var)
-		   (pprint_exp exp)
-  | GlobalFun (var,args,exp,pos) ->
-     Printf.printf "let %s %s = %s\n"
-		   (Symbol.name var)
-		   (String.concat " " (List.map Symbol.name args))
 		   (pprint_exp exp)
 
 

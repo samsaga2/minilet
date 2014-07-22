@@ -32,7 +32,7 @@ decl:
   | LET v=id EQ e=exp
     { GlobalVar (v,e,$startpos) }
   | LET v=id LPAREN RPAREN EQ e=exp
-    { GlobalFun (v,[],e,$startpos) }
+    { GlobalVar (v,LambdaExp ([],e,$startpos),$startpos) }
 
 exp:
   | e1=exp SEMICOLON e2=exp
