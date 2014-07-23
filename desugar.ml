@@ -18,11 +18,9 @@ let rec desugar_exp exp =
       CallExp (LambdaExp ([sym],exp2,pos), [exp1], pos)
 
 
-let desugar_decl decl =
-  match decl with
-  | GlobalVar (sym,exp,pos) ->
-     let exp = desugar_exp exp in
-     GlobalVar (sym,exp,pos)
+let desugar_decl (sym,exp,pos) =
+  let exp = desugar_exp exp in
+  (sym,exp,pos)
 
 
 let rec desugar_prog ast prog =

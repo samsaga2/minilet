@@ -30,11 +30,11 @@ program:
 
 decl:
   | LET v=id EQ e=exp2
-    { GlobalVar (v,e,$startpos) }
+    { (v,e,$startpos) }
   | LET v=id args=nonempty_list(id) EQ e=exp2
-    { GlobalVar (v,LambdaExp (args,e,$startpos),$startpos) }
+    { (v,LambdaExp (args,e,$startpos),$startpos) }
   | LET v=id LPAREN RPAREN EQ e=exp2
-    { GlobalVar (v,LambdaExp ([],e,$startpos),$startpos) }
+    { (v,LambdaExp ([],e,$startpos),$startpos) }
 
 exp:
   | INT

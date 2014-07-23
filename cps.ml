@@ -52,11 +52,9 @@ and convert_exp_t exp k =
      make bodyexps []
 
 
-let convert_decl decl =
-  match decl with
-  | GlobalVar (sym,exp,pos) ->
-     let exp = convert_exp_m exp in
-     GlobalVar (sym,exp,pos)
+let convert_decl (sym,exp,pos) =
+  let exp = convert_exp_m exp in
+  (sym,exp,pos)
 
 
 let rec convert_prog ast prog =
