@@ -24,3 +24,7 @@ let get symtable (_,id) =
     Some (Env.find id symtable)
   with Not_found ->
     None
+
+
+let iter fn symtable =
+  Env.iter fn symtable

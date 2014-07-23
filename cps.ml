@@ -10,9 +10,13 @@ let rec convert_exp_m exp =
    | IntExp _
    | ByteExp _
    | BoolExp _
-   | VarExp _
-   | CallExp _ ->
+   | VarExp _ ->
       exp
+   | CallExp (sym,exps,pos) ->
+      let ksym = Symbol.new_symbol () in
+      let k = VarExp (ksym,pos) in
+      let exp = convert_exp_t exp k in
+      LambdaExp ([ksym],exp,pos)
    | LambdaExp (syms,exp,pos) ->
       let ksym = Symbol.new_symbol () in
       let k = VarExp (ksym,pos) in

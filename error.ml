@@ -19,3 +19,6 @@ let variable_expected pos =
 
 let function_expected pos =
   error "function expected" pos
+
+let type_error pos =
+  error "type error" pos
