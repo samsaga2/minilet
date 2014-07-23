@@ -37,12 +37,12 @@ let rec pprint_exp = function
 		    (pprint_exp exp)
 		    (pprint_exp body)
   | LambdaExp (args,exp,pos) ->
-     Printf.sprintf "(fun %s -> %s)"
+     Printf.sprintf "[fun %s -> %s]"
 		    (pprint_syms args)
 		    (pprint_exp exp)
 
 and pprint_exps exps =
-  String.concat "," (List.map (fun exp -> "("^pprint_exp exp^")") exps)
+  String.concat " " (List.map pprint_exp exps)
 
 and pprint_syms syms =
   String.concat " " (List.map Symbol.name syms)

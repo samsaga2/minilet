@@ -1,10 +1,12 @@
+exception Not_implemented
+
 let error msg pos =
   let line = Lexer.line pos
   and col = Lexer.col pos in
   Printf.printf "%d:%d: %s\n%!" line col msg
 
-let internal_error pos =
-  error "internal error" pos
+let internal_error () =
+  raise Not_implemented
 
 let not_implemented pos =
   error "not implemented" pos
