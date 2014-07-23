@@ -61,9 +61,10 @@ let rec convert_prog ast prog =
   match prog with
   | [] ->
      ast
-  | hd::tl ->
-     let decl = convert_decl hd in
-     convert_prog (ast@[decl]) tl
+  | (sym,exp,pos)::tl ->
+     let exp = convert_exp_m exp in
+     let ast = ast@[(sym,exp,pos)] in
+     convert_prog ast tl
 
 
 let convert prog =
