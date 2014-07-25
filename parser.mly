@@ -48,8 +48,14 @@ decl:
     { Decl (Types.Undef, v, LambdaExp (t,args,e,$startpos),
 	    $startpos) }
 
+arg:
+  | LPAREN i=id COLON t=typ RPAREN
+    { (t,i) }
+  | id
+    { (Types.Undef,$1) }
+
 args:
-  | nonempty_list(id)
+  | nonempty_list(arg)
     { $1 }
   | LPAREN RPAREN
     { [] }
@@ -95,7 +101,7 @@ exp2:
 	       [left;right],$startpos) }
   | LET v=id EQ e=exp2 IN b=exp2
     { LetExp (v,e,b,$startpos) }
-  | FUN args=list(id) ARROW e=exp2
+  | FUN args=args ARROW e=exp2
     { LambdaExp (Types.Undef,args,e,$startpos) }
   | LPAREN RPAREN
     { UnitExp ($startpos) }

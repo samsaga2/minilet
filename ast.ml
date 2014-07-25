@@ -13,7 +13,7 @@ type prog = decl list
    | VarExp of typ*sym*pos
    | CallExp of typ*exp*exp list*pos
    | LetExp of sym*exp*exp*pos
-   | LambdaExp of typ*sym list*exp*pos
+   | LambdaExp of typ*(typ*sym) list*exp*pos
 
 
 let rec pprint_exp = function
@@ -41,15 +41,20 @@ let rec pprint_exp = function
 		    (pprint_exp body)
   | LambdaExp (typ,args,exp,pos) ->
      Printf.sprintf "[fun %s -> %s]:%s"
-		    (pprint_syms args)
+		    (pprint_args args)
 		    (pprint_exp exp)
 		    (Types.pprint typ)
 
 and pprint_exps exps =
   String.concat " " (List.map pprint_exp exps)
 
-and pprint_syms syms =
-  String.concat " " (List.map Symbol.name syms)
+and pprint_args args =
+  let args = List.map (fun (typ,sym) ->
+		       Printf.sprintf "%s:%s"
+				      (Symbol.name sym)
+				      (Types.pprint typ))
+		      args in
+  String.concat " " args
 
 
 let pprint_decl = function

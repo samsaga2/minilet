@@ -16,7 +16,7 @@ let rec desugar_exp exp =
       let exp1 = desugar_exp exp1
       and exp2 = desugar_exp exp2 in
       CallExp (Types.Undef,
-	       LambdaExp (Types.Undef,[sym],exp2,pos),
+	       LambdaExp (Types.Undef,[(Types.Undef,sym)],exp2,pos),
 	       [exp1], pos)
 
 
