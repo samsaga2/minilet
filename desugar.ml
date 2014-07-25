@@ -3,7 +3,7 @@ open Ast
 
 let rec desugar_exp exp =
   match exp with
-   | NilExp _
+   | UnitExp _
    | IntExp _
    | ByteExp _
    | BoolExp _

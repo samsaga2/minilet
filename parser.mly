@@ -74,7 +74,7 @@ exp2:
   | FUN args=list(id) ARROW e=exp2
     { LambdaExp (args,e,$startpos) }
   | LPAREN RPAREN
-    { NilExp ($startpos) }
+    { UnitExp ($startpos) }
   | exp LPAREN RPAREN
     { CallExp ($1,[],$startpos) }
   | exp nonempty_list(exp)

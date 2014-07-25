@@ -4,7 +4,7 @@ type pos = Lexing.position
 
 type prog = (sym*exp*pos) list
  and exp =
-   | NilExp of pos
+   | UnitExp of pos
    | IntExp of int*pos
    | ByteExp of int*pos
    | BoolExp of bool*pos
@@ -15,8 +15,8 @@ type prog = (sym*exp*pos) list
 
 
 let rec pprint_exp = function
-  | NilExp (pos) ->
-     Printf.sprintf "nil"
+  | UnitExp (pos) ->
+     Printf.sprintf "()"
   | IntExp (num,pos) ->
      Printf.sprintf "%d" num
   | ByteExp (num,pos) ->

@@ -6,7 +6,7 @@ let rec convert_exp_m exp =
   match exp with
    | LetExp _ ->
       Error.internal_error ()
-   | NilExp _
+   | UnitExp _
    | IntExp _
    | ByteExp _
    | BoolExp _
@@ -28,7 +28,7 @@ and convert_exp_t exp k =
   match exp with
   | LetExp _ ->
       Error.internal_error ()
-  | NilExp (pos)
+  | UnitExp (pos)
   | IntExp (_,pos)
   | ByteExp (_,pos)
   | BoolExp (_,pos)
