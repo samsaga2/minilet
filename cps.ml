@@ -16,13 +16,13 @@ let rec convert_exp_m exp =
       let ksym = Symbol.new_symbol () in
       let k = VarExp (Types.Undef, ksym,pos) in
       let exp = convert_exp_t exp k in
-      LambdaExp ([ksym],exp,pos)
-   | LambdaExp (syms,exp,pos) ->
+      LambdaExp (typ,[ksym],exp,pos)
+   | LambdaExp (typ,syms,exp,pos) ->
       let ksym = Symbol.new_symbol () in
       let k = VarExp (Types.Undef,ksym,pos) in
       let syms = syms@[ksym] in
       let exp = convert_exp_t exp k in
-      LambdaExp (syms,exp,pos)
+      LambdaExp (typ,syms,exp,pos)
 
 and convert_exp_t exp k =
   match exp with
@@ -33,7 +33,7 @@ and convert_exp_t exp k =
   | ByteExp (_,pos)
   | BoolExp (_,pos)
   | VarExp (_,_,pos)
-  | LambdaExp (_,_,pos) ->
+  | LambdaExp (_,_,_,pos) ->
      let exp = convert_exp_m exp in
      CallExp (Types.Undef,k,[exp],pos)
   | CallExp (typ,fnexp,bodyexps,pos) ->
@@ -46,7 +46,7 @@ and convert_exp_t exp k =
 	  let ksym = Symbol.new_symbol () in
 	  let k = VarExp (Types.Undef,ksym,pos) in
 	  let args = args@[k] in
-	  let lambda = LambdaExp ([ksym],(make tl args),pos) in
+	  let lambda = LambdaExp (Types.Undef,[ksym],(make tl args),pos) in
 	  convert_exp_t hd lambda
      in
      make bodyexps []

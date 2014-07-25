@@ -13,8 +13,10 @@
 %token EQ DEQ
 %token TRUE FALSE
 %token LET IN
-%token FUN ARROW
+%token FUN ARROW COLON DOT
+%token TYPINT TYPBYTE TYPBOOL TYPUNIT
 
+%right DOT
 %nonassoc ARROW
 %nonassoc IN
 %left PLUS MINUS
@@ -35,14 +37,22 @@ decl:
     { Decl (Types.Undef,
 	    v, e,
 	    $startpos) }
-  | LET v=id args=nonempty_list(id) EQ e=exp2
-    { Decl (Types.Undef,
-	    v, LambdaExp (args,e,$startpos),
+  | LET v=id COLON t=typ EQ e=exp2
+    { Decl (t, v, e,
 	    $startpos) }
-  | LET v=id LPAREN RPAREN EQ e=exp2
+  | LET v=id args=args EQ e=exp2
     { Decl (Types.Undef,
-	    v,LambdaExp ([],e,$startpos),
+	    v, LambdaExp (Types.Undef,args,e,$startpos),
 	    $startpos) }
+  | LET v=id args=args COLON t=typ EQ e=exp2
+    { Decl (Types.Undef, v, LambdaExp (t,args,e,$startpos),
+	    $startpos) }
+
+args:
+  | nonempty_list(id)
+    { $1 }
+  | LPAREN RPAREN
+    { [] }
 
 exp:
   | INT
@@ -86,7 +96,7 @@ exp2:
   | LET v=id EQ e=exp2 IN b=exp2
     { LetExp (v,e,b,$startpos) }
   | FUN args=list(id) ARROW e=exp2
-    { LambdaExp (args,e,$startpos) }
+    { LambdaExp (Types.Undef,args,e,$startpos) }
   | LPAREN RPAREN
     { UnitExp ($startpos) }
   | exp LPAREN RPAREN
@@ -99,3 +109,15 @@ exp2:
 id:
   | ID
       { S.symbol $1 }
+
+typ:
+  | TYPINT
+     { T.Int }
+  | TYPBYTE
+     { T.Byte }
+  | TYPUNIT
+     { T.Unit }
+  | TYPBOOL
+     { T.Bool }
+  | typ DOT typ
+     { T.Fun ($1,$3) }

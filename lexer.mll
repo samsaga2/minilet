@@ -41,6 +41,12 @@ rule token = parse
   | "in"                                { IN }
   | "fun"                               { FUN }
   | "->"                                { ARROW }
+  | ":"                                 { COLON }
+  | "."                                 { DOT }
+  | "int"                               { TYPINT }
+  | "byte"                              { TYPBYTE }
+  | "bool"                              { TYPBOOL }
+  | "unit"                              { TYPUNIT }
   | alpha (alpha|digit|"_")* as v	{ ID v }
   | digit+ as i "b"			{ BYTE (int_of_string i) }
   | digit+ as i				{ INT (int_of_string i) }

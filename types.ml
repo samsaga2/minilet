@@ -1,3 +1,5 @@
+type sym = Symbol.t
+
 type t =
   | Undef
   | Unit
