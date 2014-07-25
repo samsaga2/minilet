@@ -1,6 +1,9 @@
 open Ast
 
 
+module T = Types
+
+
 let rec desugar_exp exp =
   match exp with
    | UnitExp _
@@ -15,8 +18,8 @@ let rec desugar_exp exp =
       (* let x=20 in x+1 ==> ((x -> x+1) 20) *)
       let exp1 = desugar_exp exp1
       and exp2 = desugar_exp exp2 in
-      CallExp (Types.Undef,
-	       LambdaExp (Types.Undef,[(Types.Undef,sym)],exp2,pos),
+      CallExp (ref T.Undef,
+	       LambdaExp (ref T.Undef,[(ref T.Undef,sym)],exp2,pos),
 	       [exp1], pos)
 
 

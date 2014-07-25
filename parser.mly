@@ -34,25 +34,19 @@ program:
 
 decl:
   | LET v=id EQ e=exp2
-    { Decl (Types.Undef,
-	    v, e,
-	    $startpos) }
-  | LET v=id COLON t=typ EQ e=exp2
-    { Decl (t, v, e,
-	    $startpos) }
+    { Decl (ref T.Undef, v, e, $startpos) }
   | LET v=id args=args EQ e=exp2
-    { Decl (Types.Undef,
-	    v, LambdaExp (Types.Undef,args,e,$startpos),
-	    $startpos) }
+    { Decl (ref T.Undef, v, LambdaExp (ref T.Undef,args,e,$startpos), $startpos) }
+  | LET v=id COLON t=typ EQ e=exp2
+    { Decl (ref t, v, e, $startpos) }
   | LET v=id args=args COLON t=typ EQ e=exp2
-    { Decl (Types.Undef, v, LambdaExp (t,args,e,$startpos),
-	    $startpos) }
+    { Decl (ref T.Undef, v, LambdaExp (ref t,args,e,$startpos), $startpos) }
 
 arg:
   | LPAREN i=id COLON t=typ RPAREN
-    { (t,i) }
+    { (ref t,i) }
   | id
-    { (Types.Undef,$1) }
+    { (ref T.Undef,$1) }
 
 args:
   | nonempty_list(arg)
@@ -70,45 +64,45 @@ exp:
   | FALSE
     { BoolExp (false,$startpos) }
   | id
-    { VarExp (T.Undef, $1,$startpos) }
+    { VarExp (ref T.Undef, $1,$startpos) }
   | LPAREN e=exp2 RPAREN
     { e }
 
 exp2:
   | MINUS e=exp2 %prec UMINUS
-    { CallExp (Types.Undef,
-	       (VarExp (Types.Undef, S.symbol "-",$startpos)),
+    { CallExp (ref T.Undef,
+	       (VarExp (ref T.Undef, S.symbol "-",$startpos)),
 	       [IntExp (0,$startpos);e], $startpos) }
   | left=exp2 PLUS right=exp2
-    { CallExp (Types.Undef,
-	       (VarExp (Types.Undef, S.symbol "+",$startpos)),
+    { CallExp (ref T.Undef,
+	       (VarExp (ref T.Undef, S.symbol "+",$startpos)),
 	       [left;right], $startpos) }
   | left=exp2 MINUS right=exp2
-    { CallExp (Types.Undef,
-	       (VarExp (Types.Undef, S.symbol "-",$startpos)),
+    { CallExp (ref T.Undef,
+	       (VarExp (ref T.Undef, S.symbol "-",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 MUL right=exp2
-    { CallExp (Types.Undef,
-	       (VarExp (Types.Undef, S.symbol "*",$startpos)),
+    { CallExp (ref T.Undef,
+	       (VarExp (ref T.Undef, S.symbol "*",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 DIV right=exp2
-    { CallExp (Types.Undef,
-	       (VarExp (Types.Undef, S.symbol "/",$startpos)),
+    { CallExp (ref T.Undef,
+	       (VarExp (ref T.Undef, S.symbol "/",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 DEQ right=exp2
-    { CallExp (Types.Undef,
-	       (VarExp (Types.Undef, S.symbol "==",$startpos)),
+    { CallExp (ref T.Undef,
+	       (VarExp (ref T.Undef, S.symbol "==",$startpos)),
 	       [left;right],$startpos) }
   | LET v=id EQ e=exp2 IN b=exp2
     { LetExp (v,e,b,$startpos) }
   | FUN args=args ARROW e=exp2
-    { LambdaExp (Types.Undef,args,e,$startpos) }
+    { LambdaExp (ref T.Undef,args,e,$startpos) }
   | LPAREN RPAREN
     { UnitExp ($startpos) }
   | exp LPAREN RPAREN
-    { CallExp (Types.Undef,$1,[],$startpos) }
+    { CallExp (ref T.Undef,$1,[],$startpos) }
   | exp nonempty_list(exp)
-    { CallExp (Types.Undef,$1,$2,$startpos) }
+    { CallExp (ref T.Undef,$1,$2,$startpos) }
   | exp
     { $1 }
 

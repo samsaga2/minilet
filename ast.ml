@@ -1,6 +1,6 @@
 type sym = Symbol.t
 type pos = Lexing.position
-type typ = Types.t
+type typ = Types.t ref
 
 
 type prog = decl list
@@ -28,12 +28,12 @@ let rec pprint_exp = function
   | BoolExp (false,pos) ->
      Printf.sprintf "false"
   | VarExp (typ,var,pos) ->
-     Printf.sprintf "%s:%s" (Symbol.name var) (Types.pprint typ)
+     Printf.sprintf "%s:%s" (Symbol.name var) (Types.pprint !typ)
   | CallExp (typ,fn,exps,pos) ->
      Printf.sprintf "(%s %s):%s"
 		    (pprint_exp fn)
 		    (pprint_exps exps)
-		    (Types.pprint typ)
+		    (Types.pprint !typ)
   | LetExp (var,exp,body,pos) ->
      Printf.sprintf "let %s = %s in %s"
 		    (Symbol.name var)
@@ -43,7 +43,7 @@ let rec pprint_exp = function
      Printf.sprintf "[fun %s -> %s]:%s"
 		    (pprint_args args)
 		    (pprint_exp exp)
-		    (Types.pprint typ)
+		    (Types.pprint !typ)
 
 and pprint_exps exps =
   String.concat " " (List.map pprint_exp exps)
@@ -52,7 +52,7 @@ and pprint_args args =
   let args = List.map (fun (typ,sym) ->
 		       Printf.sprintf "%s:%s"
 				      (Symbol.name sym)
-				      (Types.pprint typ))
+				      (Types.pprint !typ))
 		      args in
   String.concat " " args
 
@@ -61,7 +61,7 @@ let pprint_decl = function
   | Decl (typ,var,exp,pos) ->
      Printf.sprintf "let %s:%s = %s\n"
 		    (Symbol.name var)
-		    (Types.pprint typ)
+		    (Types.pprint !typ)
 		    (pprint_exp exp)
 
 
