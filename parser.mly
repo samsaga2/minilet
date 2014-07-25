@@ -3,8 +3,6 @@
 
   module S = Symbol
   module T = Types
-
-  let funiii = T.Fun (T.Int, T.Fun(T.Int, T.Int))
 %}
 
 %token <int> INT
@@ -56,22 +54,28 @@ exp:
 
 exp2:
   | MINUS e=exp2 %prec UMINUS
-    { CallExp ((VarExp (funiii, S.symbol "-",$startpos)),
+    { CallExp (Types.Undef,
+	       (VarExp (Types.Undef, S.symbol "-",$startpos)),
 	       [IntExp (0,$startpos);e], $startpos) }
   | left=exp2 PLUS right=exp2
-    { CallExp ((VarExp (funiii, S.symbol "+",$startpos)),
+    { CallExp (Types.Undef,
+	       (VarExp (Types.Undef, S.symbol "+",$startpos)),
 	       [left;right], $startpos) }
   | left=exp2 MINUS right=exp2
-    { CallExp ((VarExp (funiii, S.symbol "-",$startpos)),
+    { CallExp (Types.Undef,
+	       (VarExp (Types.Undef, S.symbol "-",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 MUL right=exp2
-    { CallExp ((VarExp (funiii, S.symbol "*",$startpos)),
+    { CallExp (Types.Undef,
+	       (VarExp (Types.Undef, S.symbol "*",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 DIV right=exp2
-    { CallExp ((VarExp (funiii, S.symbol "/",$startpos)),
+    { CallExp (Types.Undef,
+	       (VarExp (Types.Undef, S.symbol "/",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 DEQ right=exp2
-    { CallExp ((VarExp (funiii, S.symbol "==",$startpos)),
+    { CallExp (Types.Undef,
+	       (VarExp (Types.Undef, S.symbol "==",$startpos)),
 	       [left;right],$startpos) }
   | LET v=id EQ e=exp2 IN b=exp2
     { LetExp (v,e,b,$startpos) }
@@ -80,9 +84,9 @@ exp2:
   | LPAREN RPAREN
     { UnitExp ($startpos) }
   | exp LPAREN RPAREN
-    { CallExp ($1,[],$startpos) }
+    { CallExp (Types.Undef,$1,[],$startpos) }
   | exp nonempty_list(exp)
-    { CallExp ($1,$2,$startpos) }
+    { CallExp (Types.Undef,$1,$2,$startpos) }
   | exp
     { $1 }
 

@@ -10,7 +10,7 @@ type prog = (sym*exp*pos) list
    | ByteExp of int*pos
    | BoolExp of bool*pos
    | VarExp of typ*sym*pos
-   | CallExp of exp*exp list*pos
+   | CallExp of typ*exp*exp list*pos
    | LetExp of sym*exp*exp*pos
    | LambdaExp of sym list*exp*pos
 
@@ -28,8 +28,11 @@ let rec pprint_exp = function
      Printf.sprintf "false"
   | VarExp (typ,var,pos) ->
      Printf.sprintf "%s:%s" (Symbol.name var) (Types.pprint typ)
-  | CallExp (fn,exps,pos) ->
-     Printf.sprintf "(%s %s)" (pprint_exp fn) (pprint_exps exps)
+  | CallExp (typ,fn,exps,pos) ->
+     Printf.sprintf "(%s %s):%s"
+		    (pprint_exp fn)
+		    (pprint_exps exps)
+		    (Types.pprint typ)
   | LetExp (var,exp,body,pos) ->
      Printf.sprintf "let %s = %s in %s"
 		    (Symbol.name var)

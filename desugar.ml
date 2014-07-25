@@ -15,7 +15,7 @@ let rec desugar_exp exp =
       (* let x=20 in x+1 ==> ((x -> x+1) 20) *)
       let exp1 = desugar_exp exp1
       and exp2 = desugar_exp exp2 in
-      CallExp (LambdaExp ([sym],exp2,pos), [exp1], pos)
+      CallExp (Types.Undef, LambdaExp ([sym],exp2,pos), [exp1], pos)
 
 
 let rec desugar_prog ast prog =
