@@ -14,12 +14,12 @@ let rec convert_exp_m exp =
       exp
    | CallExp (sym,exps,pos) ->
       let ksym = Symbol.new_symbol () in
-      let k = VarExp (ksym,pos) in
+      let k = VarExp (Types.Undef, ksym,pos) in
       let exp = convert_exp_t exp k in
       LambdaExp ([ksym],exp,pos)
    | LambdaExp (syms,exp,pos) ->
       let ksym = Symbol.new_symbol () in
-      let k = VarExp (ksym,pos) in
+      let k = VarExp (Types.Undef,ksym,pos) in
       let syms = syms@[ksym] in
       let exp = convert_exp_t exp k in
       LambdaExp (syms,exp,pos)
@@ -32,7 +32,7 @@ and convert_exp_t exp k =
   | IntExp (_,pos)
   | ByteExp (_,pos)
   | BoolExp (_,pos)
-  | VarExp (_,pos)
+  | VarExp (_,_,pos)
   | LambdaExp (_,_,pos) ->
      let exp = convert_exp_m exp in
      CallExp (k,[exp],pos)
@@ -44,7 +44,7 @@ and convert_exp_t exp k =
 	  CallExp (fnexp,args,pos)
        | hd::tl ->
 	  let ksym = Symbol.new_symbol () in
-	  let k = VarExp (ksym,pos) in
+	  let k = VarExp (Types.Undef,ksym,pos) in
 	  let args = args@[k] in
 	  let lambda = LambdaExp ([ksym],(make tl args),pos) in
 	  convert_exp_t hd lambda

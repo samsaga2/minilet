@@ -1,5 +1,6 @@
 type sym = Symbol.t
 type pos = Lexing.position
+type typ = Types.t
 
 
 type prog = (sym*exp*pos) list
@@ -8,7 +9,7 @@ type prog = (sym*exp*pos) list
    | IntExp of int*pos
    | ByteExp of int*pos
    | BoolExp of bool*pos
-   | VarExp of sym*pos
+   | VarExp of typ*sym*pos
    | CallExp of exp*exp list*pos
    | LetExp of sym*exp*exp*pos
    | LambdaExp of sym list*exp*pos
@@ -25,8 +26,8 @@ let rec pprint_exp = function
      Printf.sprintf "true"
   | BoolExp (false,pos) ->
      Printf.sprintf "false"
-  | VarExp (var,pos) ->
-     Printf.sprintf "%s" (Symbol.name var)
+  | VarExp (typ,var,pos) ->
+     Printf.sprintf "%s:%s" (Symbol.name var) (Types.pprint typ)
   | CallExp (fn,exps,pos) ->
      Printf.sprintf "(%s %s)" (pprint_exp fn) (pprint_exps exps)
   | LetExp (var,exp,body,pos) ->
