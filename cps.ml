@@ -52,19 +52,20 @@ and convert_exp_t exp k =
      make bodyexps []
 
 
-let convert_decl (sym,exp,pos) =
-  let exp = convert_exp_m exp in
-  (sym,exp,pos)
+let convert_decl = function
+  | Decl (typ,sym,exp,pos) ->
+     let cpsexp = convert_exp_m exp in
+     Decl (typ,sym,cpsexp,pos)
 
 
-let rec convert_prog ast prog =
+let rec convert_prog cpsprog prog =
   match prog with
   | [] ->
-     ast
-  | (sym,exp,pos)::tl ->
-     let exp = convert_exp_m exp in
-     let ast = ast@[(sym,exp,pos)] in
-     convert_prog ast tl
+     cpsprog
+  | hd::tl ->
+     let cpsdecl = convert_decl hd in
+     let cpsprog = cpsprog@[cpsdecl] in
+     convert_prog cpsprog tl
 
 
 let convert prog =

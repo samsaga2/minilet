@@ -32,11 +32,17 @@ program:
 
 decl:
   | LET v=id EQ e=exp2
-    { (v,e,$startpos) }
+    { Decl (Types.Undef,
+	    v, e,
+	    $startpos) }
   | LET v=id args=nonempty_list(id) EQ e=exp2
-    { (v,LambdaExp (args,e,$startpos),$startpos) }
+    { Decl (Types.Undef,
+	    v, LambdaExp (args,e,$startpos),
+	    $startpos) }
   | LET v=id LPAREN RPAREN EQ e=exp2
-    { (v,LambdaExp ([],e,$startpos),$startpos) }
+    { Decl (Types.Undef,
+	    v,LambdaExp ([],e,$startpos),
+	    $startpos) }
 
 exp:
   | INT
@@ -92,4 +98,4 @@ exp2:
 
 id:
   | ID
-    { S.symbol $1 }
+      { S.symbol $1 }

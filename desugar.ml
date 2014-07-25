@@ -18,14 +18,20 @@ let rec desugar_exp exp =
       CallExp (Types.Undef, LambdaExp ([sym],exp2,pos), [exp1], pos)
 
 
-let rec desugar_prog ast prog =
+let desugar_decl = function
+  | Decl (typ,sym,exp,pos) ->
+     let exp = desugar_exp exp in
+     Decl (typ,sym,exp,pos)
+
+
+let rec desugar_prog desprog prog =
   match prog with
   | [] ->
-     ast
-  | (sym,exp,pos)::tl ->
-     let exp = desugar_exp exp in
-     let ast = ast@[(sym,exp,pos)] in
-     desugar_prog ast tl
+     desprog
+  | hd::tl ->
+     let decl = desugar_decl hd in
+     let desprog = desprog@[decl] in
+     desugar_prog desprog tl
 
 
 let desugar prog =

@@ -3,7 +3,8 @@ type pos = Lexing.position
 type typ = Types.t
 
 
-type prog = (sym*exp*pos) list
+type prog = decl list
+ and decl = Decl of typ*sym*exp*pos
  and exp =
    | UnitExp of pos
    | IntExp of int*pos
@@ -50,11 +51,13 @@ and pprint_syms syms =
   String.concat " " (List.map Symbol.name syms)
 
 
-let pprint_decl (var,exp,pos) =
-  Printf.printf "let %s = %s\n"
-		(Symbol.name var)
-		(pprint_exp exp)
+let pprint_decl = function
+  | Decl (typ,var,exp,pos) ->
+     Printf.sprintf "let %s:%s = %s\n"
+		    (Symbol.name var)
+		    (Types.pprint typ)
+		    (pprint_exp exp)
 
 
 let pprint prog =
-  List.iter pprint_decl prog
+  String.concat "\n" (List.map pprint_decl prog)
