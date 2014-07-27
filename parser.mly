@@ -36,11 +36,11 @@ decl:
   | LET v=id EQ e=exp2
     { Decl (ref T.Undef, v, e, $startpos) }
   | LET v=id args=args EQ e=exp2
-    { Decl (ref T.Undef, v, LambdaExp (ref T.Undef,args,e,$startpos), $startpos) }
+    { Decl (ref T.Undef, v, LambdaExp (args,e,$startpos), $startpos) }
   | LET v=id COLON t=typ EQ e=exp2
     { Decl (ref t, v, e, $startpos) }
   | LET v=id args=args COLON t=typ EQ e=exp2
-    { Decl (ref T.Undef, v, LambdaExp (ref t,args,e,$startpos), $startpos) }
+    { Decl (ref T.Undef, v, LambdaExp (args,e,$startpos), $startpos) }
 
 arg:
   | LPAREN i=id COLON t=typ RPAREN
@@ -96,7 +96,7 @@ exp2:
   | LET v=id EQ e=exp2 IN b=exp2
     { LetExp (v,e,b,$startpos) }
   | FUN args=args ARROW e=exp2
-    { LambdaExp (ref T.Undef,args,e,$startpos) }
+    { LambdaExp (args,e,$startpos) }
   | LPAREN RPAREN
     { UnitExp ($startpos) }
   | exp LPAREN RPAREN

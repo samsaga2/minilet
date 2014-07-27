@@ -22,13 +22,13 @@ let rec convert_exp_m exp =
       let ksym = S.new_symbol () in
       let k = VarExp (ref T.Undef, ksym,pos) in
       let exp = convert_exp_t exp k in
-      LambdaExp (typ,[(ref T.Undef,ksym)],exp,pos)
-   | LambdaExp (typ,syms,exp,pos) ->
+      LambdaExp ([(ref T.Undef,ksym)],exp,pos)
+   | LambdaExp (syms,exp,pos) ->
       let ksym = S.new_symbol () in
       let k = VarExp (ref T.Undef,ksym,pos) in
       let syms = syms@[(ref T.Undef,ksym)] in
       let exp = convert_exp_t exp k in
-      LambdaExp (typ,syms,exp,pos)
+      LambdaExp (syms,exp,pos)
 
 and convert_exp_t exp k =
   match exp with
@@ -39,7 +39,7 @@ and convert_exp_t exp k =
   | ByteExp (_,pos)
   | BoolExp (_,pos)
   | VarExp (_,_,pos)
-  | LambdaExp (_,_,_,pos) ->
+  | LambdaExp (_,_,pos) ->
      let exp = convert_exp_m exp in
      CallExp (ref T.Undef,k,[exp],pos)
   | CallExp (typ,fnexp,bodyexps,pos) ->
@@ -52,7 +52,7 @@ and convert_exp_t exp k =
 	  let ksym = S.new_symbol () in
 	  let k = VarExp (ref T.Undef,ksym,pos) in
 	  let args = args@[k] in
-	  let lambda = LambdaExp (ref T.Undef,[(ref T.Undef,ksym)],(make tl args),pos) in
+	  let lambda = LambdaExp ([(ref T.Undef,ksym)],(make tl args),pos) in
 	  convert_exp_t hd lambda
      in
      make bodyexps []
