@@ -3,7 +3,7 @@ let compile in_buffer =
   let ast = Parser.program Lexer.token lexbuf in
   let ast = Desugar.desugar ast in
   let ast = Cps.convert ast in
-  let ast = Semant.semant ast in
+  Semant.semant ast;
   print_endline (Ast.pprint ast)
 
 let _ =
