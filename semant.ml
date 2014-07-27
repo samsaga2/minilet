@@ -35,8 +35,21 @@ and semant_call env typ exp args pos =
   let exptyp = semant_exp env exp in
   match !exptyp with
   | T.Fun(typlambda) ->
-     (* TODO: comparar typargs con typlambda *)
-     (* TODO: comparar typ con lo que sobre de la lista typlambda *)
+     let rec make typargs typlambda =
+       match typargs with
+       | [] -> typlambda
+       | typhdarg::typtlargs ->
+	  let typhdlambda = List.hd typlambda
+	  and typtllambda = List.tl typlambda in
+	  assert_type typhdarg typhdlambda pos;
+	  make typtlargs typtllambda
+     in
+     let typreturn = make (typargs@[exptyp]) typlambda in
+     let typreturn = match typreturn with
+       | [] -> ref T.Unit
+       | hd::[] -> hd
+       | _ -> ref (T.Fun typreturn) in
+     assert_type typ typreturn pos;
      exptyp
   | _ ->
      Error.function_expected pos;
@@ -44,12 +57,10 @@ and semant_call env typ exp args pos =
 
 and semant_lambda env args exp pos =
   let env = List.fold_left
-	      (fun env (typarg,symarg) ->
-	       Env.put env symarg typarg)
+	      (fun env (typarg,symarg) -> Env.put env symarg typarg)
 	      env args in
   let typexp = semant_exp env exp in
-  let typargs = List.map (fun (typ,_) -> typ)
-			 args in
+  let typargs = List.map (fun (typ,_) -> typ) args in
   ref (T.Fun (typargs@[typexp]))
 
 and semant_var env typ sym pos =
@@ -79,4 +90,7 @@ let rec semant_prog env prog =
 
 let semant prog =
   let env = Env.empty in
+  let env = Env.put env
+		    (Symbol.symbol "+")
+		    (ref (T.Fun [ref T.Int; ref T.Int; ref T.Int])) in
   semant_prog env prog

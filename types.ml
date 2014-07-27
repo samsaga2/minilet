@@ -11,12 +11,12 @@ type t =
 
 let rec pprint typ =
   match !typ with
-  | Error       -> "(error)"
-  | Undef	-> "(undef)"
-  | Unit	-> "(unit)"
-  | Byte	-> "(byte)"
-  | Int		-> "(int)"
-  | Bool	-> "(bool)"
+  | Error       -> "error"
+  | Undef	-> "undef"
+  | Unit	-> "unit"
+  | Byte	-> "byte"
+  | Int		-> "int"
+  | Bool	-> "bool"
   | Fun(typs)	->
      let typs = List.map pprint typs in
      "("^(String.concat "." typs)^")"
