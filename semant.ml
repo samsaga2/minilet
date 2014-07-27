@@ -24,12 +24,20 @@ let rec semant_exp env exp =
    | CallExp _ ->
       (* TODO:  *)
       ref T.Unit
-   | LambdaExp _ ->
-      (* TODO:  *)
-      ref T.Unit
+   | LambdaExp (args,exp,pos) ->
+      semant_lambda env args exp pos
    | LetExp _ ->
-      (* TODO:  *)
-      ref T.Unit
+      Error.internal_error ()
+
+and semant_lambda env args exp pos =
+  let env = List.fold_left
+	      (fun env (typarg,symarg) ->
+	       Env.put env symarg typarg)
+	      env args in
+  let typexp = semant_exp env exp in
+  let typargs = List.map (fun (typ,_) -> typ)
+			 args in
+  ref (T.Fun (typargs@[typexp]))
 
 and semant_var env typ sym pos =
   match Env.get env sym with

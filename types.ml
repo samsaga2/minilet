@@ -6,12 +6,15 @@ type t =
   | Byte
   | Int
   | Bool
-  | Fun of t*t
+  | Fun of t ref list
 
-let rec pprint = function
-  | Undef	-> "undef"
-  | Unit	-> "unit"
-  | Byte	-> "byte"
-  | Int		-> "int"
-  | Bool	-> "bool"
-  | Fun(t1,t2)	-> (pprint t1)^"."^(pprint t2)
+let rec pprint typ =
+  match !typ with
+  | Undef	-> "(undef)"
+  | Unit	-> "(unit)"
+  | Byte	-> "(byte)"
+  | Int		-> "(int)"
+  | Bool	-> "(bool)"
+  | Fun(typs)	->
+     let typs = List.map pprint typs in
+     "("^(String.concat "." typs)^")"

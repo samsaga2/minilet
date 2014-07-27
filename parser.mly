@@ -38,13 +38,13 @@ decl:
   | LET v=id args=args EQ e=exp2
     { Decl (ref T.Undef, v, LambdaExp (args,e,$startpos), $startpos) }
   | LET v=id COLON t=typ EQ e=exp2
-    { Decl (ref t, v, e, $startpos) }
+    { Decl (t, v, e, $startpos) }
   | LET v=id args=args COLON t=typ EQ e=exp2
     { Decl (ref T.Undef, v, LambdaExp (args,e,$startpos), $startpos) }
 
 arg:
   | LPAREN i=id COLON t=typ RPAREN
-    { (ref t,i) }
+    { (t,i) }
   | id
     { (ref T.Undef,$1) }
 
@@ -112,12 +112,12 @@ id:
 
 typ:
   | TYPINT
-     { T.Int }
+     { ref T.Int }
   | TYPBYTE
-     { T.Byte }
+     { ref T.Byte }
   | TYPUNIT
-     { T.Unit }
+     { ref T.Unit }
   | TYPBOOL
-     { T.Bool }
-  | typ DOT typ
-     { T.Fun ($1,$3) }
+     { ref T.Bool }
+  | LPAREN l=separated_nonempty_list(DOT,typ) RPAREN
+     { ref (T.Fun l) }
