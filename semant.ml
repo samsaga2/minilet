@@ -31,8 +31,16 @@ let rec semant_exp env exp =
       Error.internal_error ()
 
 and semant_call env typ exp args pos =
-  (* TODO:  *)
-  ref T.Unit
+  let typargs = List.map (semant_exp env) args in
+  let exptyp = semant_exp env exp in
+  match !exptyp with
+  | T.Fun(typlambda) ->
+     (* TODO: comparar typargs con typlambda *)
+     (* TODO: comparar typ con lo que sobre de la lista typlambda *)
+     exptyp
+  | _ ->
+     Error.function_expected pos;
+     ref T.Error
 
 and semant_lambda env args exp pos =
   let env = List.fold_left
