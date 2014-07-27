@@ -1,6 +1,7 @@
 type sym = Symbol.t
 
 type t =
+  | Error
   | Undef
   | Unit
   | Byte
@@ -10,6 +11,7 @@ type t =
 
 let rec pprint typ =
   match !typ with
+  | Error       -> "(error)"
   | Undef	-> "(undef)"
   | Unit	-> "(unit)"
   | Byte	-> "(byte)"

@@ -5,7 +5,9 @@ module T = Types
 
 
 let assert_type typ1 typ2 pos =
-  if !typ1=T.Undef then
+  if !typ1=T.Error || !typ2=T.Error then
+    Error.type_error pos
+  else if !typ1=T.Undef then
     typ1:=!typ2
   else if !typ2=T.Undef then
     typ2:=!typ1
@@ -21,13 +23,16 @@ let rec semant_exp env exp =
    | BoolExp _ -> ref T.Bool
    | VarExp (typ,sym,pos) ->
       semant_var env typ sym pos
-   | CallExp _ ->
-      (* TODO:  *)
-      ref T.Unit
+   | CallExp (typ,exp,args,pos) ->
+      semant_call env typ exp args pos
    | LambdaExp (args,exp,pos) ->
       semant_lambda env args exp pos
    | LetExp _ ->
       Error.internal_error ()
+
+and semant_call env typ exp args pos =
+  (* TODO:  *)
+  ref T.Unit
 
 and semant_lambda env args exp pos =
   let env = List.fold_left
@@ -46,7 +51,7 @@ and semant_var env typ sym pos =
      typ
   | None ->
      Error.undeclared sym pos;
-     ref T.Unit
+     ref T.Error
 
 
 let semant_decl env = function
