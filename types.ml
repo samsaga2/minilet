@@ -7,7 +7,7 @@ type t =
   | Byte
   | Int
   | Bool
-  | Fun of t ref list
+  | Fun of (t ref)*(t ref)
 
 let rec pprint typ =
   match !typ with
@@ -17,6 +17,7 @@ let rec pprint typ =
   | Byte	-> "byte"
   | Int		-> "int"
   | Bool	-> "bool"
-  | Fun(typs)	->
-     let typs = List.map pprint typs in
-     "("^(String.concat "." typs)^")"
+  | Fun(t1,t2)	->
+    let t1 = pprint t1 and t2 = pprint t2 in
+    Printf.sprintf "(%s.%s)" t1 t2
+

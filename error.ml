@@ -22,3 +22,7 @@ let function_expected pos =
 
 let type_error pos =
   error "type error" pos
+
+let missing_arguments pos =
+  error "missing arguments" pos
+

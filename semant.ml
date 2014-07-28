@@ -2,18 +2,33 @@ open Ast
 
 
 module T = Types
+module E = Error
 
 
-let assert_type typ1 typ2 pos =
-  if !typ1=T.Error || !typ2=T.Error then
-    Error.type_error pos
-  else if !typ1=T.Undef then
-    typ1:=!typ2
-  else if !typ2=T.Undef then
-    typ2:=!typ1
-  else if !typ2<>T.Undef && !typ1<> !typ2 then
-    Error.type_error pos
+let rec assert_type typ1 typ2 pos =
+  match (!typ1,!typ2) with
+  | (T.Error,_) -> ()
+  | (_,T.Error) -> ()
+  | (T.Undef,_) -> typ1:=!typ2
+  | (_,T.Undef) -> typ2:=!typ1
+  | (T.Fun(t1a,t1b),T.Fun(t2a,t2b)) ->
+    assert_type t1a t2a pos;
+    assert_type t1b t2b pos
+  | _ ->
+    E.type_error pos
 
+
+let assert_arg_types args lambda pos =
+    match args with
+    | [] -> lambda
+    | hdarg::args ->
+      match lambda with
+      | hd::[] ->
+         E.missing_arguments pos;
+	 ref T.Error
+      | hdlambda::lambda ->
+         assert_type hdarg hdlambda pos;
+         assert_arg_types args lambda
 
 let rec semant_exp env exp =
   match exp with
@@ -28,31 +43,17 @@ let rec semant_exp env exp =
    | LambdaExp (args,exp,pos) ->
       semant_lambda env args exp pos
    | LetExp _ ->
-      Error.internal_error ()
+      E.internal_error ()
 
 and semant_call env typ exp args pos =
   let typargs = List.map (semant_exp env) args in
-  let exptyp = semant_exp env exp in
-  match !exptyp with
-  | T.Fun(typlambda) ->
-     let rec make typargs typlambda =
-       match typargs with
-       | [] -> typlambda
-       | typhdarg::typtlargs ->
-	  let typhdlambda = List.hd typlambda
-	  and typtllambda = List.tl typlambda in
-	  assert_type typhdarg typhdlambda pos;
-	  make typtlargs typtllambda
-     in
-     let typreturn = make (typargs@[exptyp]) typlambda in
-     let typreturn = match typreturn with
-       | [] -> ref T.Unit
-       | hd::[] -> hd
-       | _ -> ref (T.Fun typreturn) in
-     assert_type typ typreturn pos;
-     exptyp
+  let lambdatyp = semant_exp env exp in
+
+  match !lambdatyp with
+  | T.Fun _ ->
+     assert_arg_types typargs lambdatyp pos
   | _ ->
-     Error.function_expected pos;
+     E.function_expected pos;
      ref T.Error
 
 and semant_lambda env args exp pos =
@@ -69,7 +70,7 @@ and semant_var env typ sym pos =
      assert_type typ envtyp pos;
      typ
   | None ->
-     Error.undeclared sym pos;
+     E.undeclared sym pos;
      ref T.Error
 
 

@@ -119,5 +119,5 @@ typ:
      { ref T.Unit }
   | TYPBOOL
      { ref T.Bool }
-  | LPAREN l=separated_nonempty_list(DOT,typ) RPAREN
-     { ref (T.Fun l) }
+  | typ DOT typ
+     { ref (T.Fun ($1,$3)) }
