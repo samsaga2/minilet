@@ -1,4 +1,4 @@
-open Ast
+open Astcore
 
 
 module T = Types
@@ -10,8 +10,6 @@ module E = Error
 
 let rec convert_exp_m exp =
   match exp with
-   | LetExp _ ->
-      E.internal_error ()
    | UnitExp _
    | IntExp _
    | ByteExp _
@@ -32,8 +30,6 @@ let rec convert_exp_m exp =
 
 and convert_exp_t exp k =
   match exp with
-  | LetExp _ ->
-      E.internal_error ()
   | UnitExp (pos)
   | IntExp (_,pos)
   | ByteExp (_,pos)

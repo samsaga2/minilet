@@ -42,8 +42,6 @@ let rec semant_exp env exp =
       semant_call env typ exp args pos
    | LambdaExp (args,exp,pos) ->
       semant_lambda env args exp pos
-   | LetExp _ ->
-      E.internal_error ()
 
 and semant_call env typ exp args pos =
   let typargs = List.map (semant_exp env) args in
