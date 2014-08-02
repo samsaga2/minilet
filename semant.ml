@@ -54,7 +54,9 @@ and semant_call env typ exp args pos =
 
   match !typlambda with
   | T.Fun (typlambdaargs) ->
-     assert_arg_types typargs typlambdaargs pos
+     let typreturn = assert_arg_types typargs typlambdaargs pos in
+     assert_type typ typreturn pos;
+     typreturn
   | _ ->
      E.function_expected pos;
      ref T.Error
