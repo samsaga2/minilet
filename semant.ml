@@ -13,8 +13,9 @@ let rec assert_type typ1 typ2 pos =
   | (_,T.Undef) -> typ2:=!typ1
   | (T.Fun(typs1),T.Fun(typs2)) ->
      List.iter2 (fun t1 t2 -> assert_type t1 t2 pos) typs1 typs2
-  | _ ->
+  | (t1,t2) when t1<>t2 ->
     E.type_error pos
+  | _ -> ()
 
 
 let rec assert_arg_types args lambda pos =
