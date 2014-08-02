@@ -4,7 +4,7 @@ let compile in_buffer =
   let ast = Desugar.desugar ast in
   let ast = Cps.convert ast in
   Semant.semant ast;
-  print_endline (Ast.pprint ast)
+  print_endline (Astcore.pprint ast)
 
 let _ =
   compile stdin

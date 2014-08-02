@@ -1,4 +1,4 @@
-open Ast
+open Astcore
 
 
 module T = Types
@@ -11,24 +11,24 @@ let rec assert_type typ1 typ2 pos =
   | (_,T.Error) -> ()
   | (T.Undef,_) -> typ1:=!typ2
   | (_,T.Undef) -> typ2:=!typ1
-  | (T.Fun(t1a,t1b),T.Fun(t2a,t2b)) ->
-    assert_type t1a t2a pos;
-    assert_type t1b t2b pos
+  | (T.Fun(typs1),T.Fun(typs2)) ->
+     List.iter2 (fun t1 t2 -> assert_type t1 t2 pos) typs1 typs2
   | _ ->
     E.type_error pos
 
 
-let assert_arg_types args lambda pos =
+let rec assert_arg_types args lambda pos =
     match args with
-    | [] -> lambda
+    | [] ->
+       ref (T.Fun lambda)
     | hdarg::args ->
       match lambda with
-      | hd::[] ->
+      | [] ->
          E.missing_arguments pos;
 	 ref T.Error
       | hdlambda::lambda ->
          assert_type hdarg hdlambda pos;
-         assert_arg_types args lambda
+         assert_arg_types args lambda pos
 
 let rec semant_exp env exp =
   match exp with
@@ -45,11 +45,11 @@ let rec semant_exp env exp =
 
 and semant_call env typ exp args pos =
   let typargs = List.map (semant_exp env) args in
-  let lambdatyp = semant_exp env exp in
+  let typlambda = semant_exp env exp in
 
-  match !lambdatyp with
-  | T.Fun _ ->
-     assert_arg_types typargs lambdatyp pos
+  match !typlambda with
+  | T.Fun (typlambdaargs) ->
+     assert_arg_types typargs typlambdaargs pos
   | _ ->
      E.function_expected pos;
      ref T.Error

@@ -16,7 +16,6 @@
 %token FUN ARROW COLON DOT
 %token TYPINT TYPBYTE TYPBOOL TYPUNIT
 
-%right DOT
 %nonassoc ARROW
 %nonassoc IN
 %left PLUS MINUS
@@ -119,5 +118,5 @@ typ:
      { ref T.Unit }
   | TYPBOOL
      { ref T.Bool }
-  | typ DOT typ
-     { ref (T.Fun ($1,$3)) }
+  | LPAREN l=separated_nonempty_list(DOT, typ) RPAREN
+     { ref (T.Fun (l)) }
