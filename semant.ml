@@ -19,8 +19,13 @@ let rec assert_type typ1 typ2 pos =
 
 let rec assert_arg_types args lambda pos =
     match args with
-    | [] ->
-       ref (T.Fun lambda)
+    | []  ->
+       begin
+	 match List.length lambda with
+	 | 0 -> ref T.Unit
+	 | 1 -> List.hd lambda
+	 | _ -> ref (T.Fun lambda)
+       end
     | hdarg::args ->
       match lambda with
       | [] ->
