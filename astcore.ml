@@ -10,7 +10,7 @@ type prog = decl list
    | IntExp of int*pos
    | ByteExp of int*pos
    | BoolExp of bool*pos
-   | VarExp of typ*sym*pos
+   | VarExp of sym*pos
    | CallExp of typ*exp*exp list*pos
    | LambdaExp of (typ*sym) list*exp*pos
 
@@ -26,13 +26,12 @@ let rec pprint_exp = function
      Printf.sprintf "true"
   | BoolExp (false,pos) ->
      Printf.sprintf "false"
-  | VarExp (typ,var,pos) ->
-     Printf.sprintf "%s:%s" (Symbol.name var) (Types.pprint typ)
+  | VarExp (var,pos) ->
+     Printf.sprintf "%s" (Symbol.name var)
   | CallExp (typ,fn,exps,pos) ->
-     Printf.sprintf "(%s %s):%s"
+     Printf.sprintf "(%s %s)"
 		    (pprint_exp fn)
 		    (pprint_exps exps)
-		    (Types.pprint typ)
   | LambdaExp (args,exp,pos) ->
      Printf.sprintf "[fun %s -> %s]"
 		    (pprint_args args)

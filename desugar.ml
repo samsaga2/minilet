@@ -10,7 +10,7 @@ let rec desugar_exp exp =
    | IntExp (num,pos) -> A.IntExp (num,pos)
    | ByteExp (num,pos) -> A.ByteExp (num,pos)
    | BoolExp (num,pos) -> A.BoolExp (num,pos)
-   | VarExp (typ,sym,pos) -> A.VarExp (typ,sym,pos)
+   | VarExp (sym,pos) -> A.VarExp (sym,pos)
    | CallExp (typ,exp,exps,pos) ->
       let exp = desugar_exp exp
       and exps = desugar_exps exps in

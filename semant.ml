@@ -42,8 +42,8 @@ let rec semant_exp env exp =
    | IntExp _ -> ref T.Int
    | ByteExp _ -> ref T.Byte
    | BoolExp _ -> ref T.Bool
-   | VarExp (typ,sym,pos) ->
-      semant_var env typ sym pos
+   | VarExp (sym,pos) ->
+      semant_var env sym pos
    | CallExp (typ,exp,args,pos) ->
       semant_call env typ exp args pos
    | LambdaExp (args,exp,pos) ->
@@ -70,11 +70,10 @@ and semant_lambda env args exp pos =
   let typargs = List.map (fun (typ,_) -> typ) args in
   ref (T.Fun (typargs@[typexp]))
 
-and semant_var env typ sym pos =
+and semant_var env sym pos =
   match Env.get env sym with
   | Some(envtyp) ->
-     assert_type typ envtyp pos;
-     typ
+     envtyp
   | None ->
      E.undeclared sym pos;
      ref T.Error
@@ -99,5 +98,5 @@ let semant prog =
   let env = Env.empty in
   let env = Env.put env
 		    (Symbol.symbol "+")
-		    (ref (T.Fun [ref T.Int; ref T.Int; ref T.Int])) in
+		    (ref (T.Fun [ref T.Int; ref T.Int; ref (T.Fun [ref T.Int; ref T.Unit])])) in
   semant_prog env prog

@@ -63,34 +63,34 @@ exp:
   | FALSE
     { BoolExp (false,$startpos) }
   | id
-    { VarExp (ref T.Undef, $1,$startpos) }
+    { VarExp ($1,$startpos) }
   | LPAREN e=exp2 RPAREN
     { e }
 
 exp2:
   | MINUS e=exp2 %prec UMINUS
     { CallExp (ref T.Undef,
-	       (VarExp (ref T.Undef, S.symbol "-",$startpos)),
+	       (VarExp (S.symbol "-",$startpos)),
 	       [IntExp (0,$startpos);e], $startpos) }
   | left=exp2 PLUS right=exp2
     { CallExp (ref T.Undef,
-	       (VarExp (ref T.Undef, S.symbol "+",$startpos)),
+	       (VarExp (S.symbol "+",$startpos)),
 	       [left;right], $startpos) }
   | left=exp2 MINUS right=exp2
     { CallExp (ref T.Undef,
-	       (VarExp (ref T.Undef, S.symbol "-",$startpos)),
+	       (VarExp (S.symbol "-",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 MUL right=exp2
     { CallExp (ref T.Undef,
-	       (VarExp (ref T.Undef, S.symbol "*",$startpos)),
+	       (VarExp (S.symbol "*",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 DIV right=exp2
     { CallExp (ref T.Undef,
-	       (VarExp (ref T.Undef, S.symbol "/",$startpos)),
+	       (VarExp (S.symbol "/",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 DEQ right=exp2
     { CallExp (ref T.Undef,
-	       (VarExp (ref T.Undef, S.symbol "==",$startpos)),
+	       (VarExp (S.symbol "==",$startpos)),
 	       [left;right],$startpos) }
   | LET v=id EQ e=exp2 IN b=exp2
     { LetExp (v,e,b,$startpos) }
