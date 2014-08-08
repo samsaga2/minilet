@@ -82,15 +82,15 @@ and semant_var env sym pos =
 let semant_decl env = function
   | Decl (typ,sym,exp,pos) ->
      let semtyp = semant_exp env exp in
-     assert_type typ semtyp pos
-
+     assert_type typ semtyp pos;
+     Env.put env sym semtyp
 
 let rec semant_prog env prog =
   match prog with
   | [] ->
      ()
   | hd::tl ->
-     semant_decl env hd;
+     let env = semant_decl env hd in
      semant_prog env tl
 
 
