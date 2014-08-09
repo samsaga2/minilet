@@ -11,10 +11,10 @@ let rec desugar_exp exp =
    | ByteExp (num,pos) -> A.ByteExp (num,pos)
    | BoolExp (num,pos) -> A.BoolExp (num,pos)
    | VarExp (sym,pos) -> A.VarExp (sym,pos)
-   | CallExp (typ,exp,exps,pos) ->
+   | CallExp (exp,exps,pos) ->
       let exp = desugar_exp exp
       and exps = desugar_exps exps in
-      A.CallExp (typ,exp,exps,pos)
+      A.CallExp (exp,exps,pos)
    | LambdaExp (args,exp,pos) ->
       let exp = desugar_exp exp in
       A.LambdaExp (args,exp,pos)
@@ -22,8 +22,7 @@ let rec desugar_exp exp =
       (* let x=20 in x+1 ==> ((x -> x+1) 20) *)
       let exp1 = desugar_exp exp1
       and exp2 = desugar_exp exp2 in
-      A.CallExp (ref T.Undef,
-		 A.LambdaExp ([(ref T.Undef,sym)],exp2,pos),
+      A.CallExp (A.LambdaExp ([(ref T.Undef,sym)],exp2,pos),
 		 [exp1], pos)
 
 and desugar_exps exps =

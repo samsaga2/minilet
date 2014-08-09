@@ -12,8 +12,8 @@ let rec equivalence_exp env exp =
       equivalence_varexp env sym pos
    | LambdaExp (args,exp,pos) ->
       equivalence_lambdaexp env args exp pos
-   | CallExp (typ,exp,exps,pos) ->
-      equivalence_callexp env typ exp exps pos
+   | CallExp (exp,exps,pos) ->
+      equivalence_callexp env exp exps pos
 
 and equivalence_varexp env sym pos =
   match Env.get env sym with
@@ -34,10 +34,10 @@ and equivalence_lambdaexp env args exp pos =
   let exp = equivalence_exp env exp in
   LambdaExp (args,exp,pos)
 
-and equivalence_callexp env typ exp exps pos =
+and equivalence_callexp env exp exps pos =
   let exp = equivalence_exp env exp in
   let exps = List.map (equivalence_exp env) exps in
-  CallExp (typ,exp,exps,pos)
+  CallExp (exp,exps,pos)
 
 
 let equivalence_decl = function

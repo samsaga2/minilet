@@ -44,20 +44,18 @@ let rec semant_exp env exp =
    | BoolExp _ -> ref T.Bool
    | VarExp (sym,pos) ->
       semant_var env sym pos
-   | CallExp (typ,exp,args,pos) ->
-      semant_call env typ exp args pos
+   | CallExp (exp,args,pos) ->
+      semant_call env exp args pos
    | LambdaExp (args,exp,pos) ->
       semant_lambda env args exp pos
 
-and semant_call env typ exp args pos =
+and semant_call env exp args pos =
   let typargs = List.map (semant_exp env) args in
   let typlambda = semant_exp env exp in
 
   match !typlambda with
   | T.Fun (typlambdaargs) ->
-     let typreturn = assert_arg_types typargs typlambdaargs pos in
-     assert_type typ typreturn pos;
-     typreturn
+     assert_arg_types typargs typlambdaargs pos
   | _ ->
      E.function_expected pos;
      ref T.Error

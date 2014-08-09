@@ -26,8 +26,8 @@ let rec reduce_exp env exp =
       reduce_varexp env sym pos
    | LambdaExp (args,exp,pos) ->
       reduce_lambdaexp env args exp pos
-   | CallExp (typ,exp,exps,pos) ->
-      reduce_callexp env typ exp exps pos
+   | CallExp (exp,exps,pos) ->
+      reduce_callexp env exp exps pos
 
 and reduce_varexp env sym pos =
   match Env.get env sym with
@@ -40,7 +40,7 @@ and reduce_lambdaexp env args exp pos =
   let exp = reduce_exp env exp in
   LambdaExp (args,exp,pos)
 
-and reduce_callexp env typ exp exps pos =
+and reduce_callexp env exp exps pos =
   let exp = reduce_exp env exp in
   let exps = List.map (reduce_exp env) exps in
   match exp with
@@ -51,7 +51,7 @@ and reduce_callexp env typ exp exps pos =
 		 env exps largs in
      reduce_exp env lexp
   | _ ->
-     CallExp (typ,exp,exps,pos)
+     CallExp (exp,exps,pos)
 
 
 let reduce_decl = function

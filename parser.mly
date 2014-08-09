@@ -69,28 +69,22 @@ exp:
 
 exp2:
   | MINUS e=exp2 %prec UMINUS
-    { CallExp (ref T.Undef,
-	       (VarExp (S.symbol "-",$startpos)),
+    { CallExp ((VarExp (S.symbol "-",$startpos)),
 	       [IntExp (0,$startpos);e], $startpos) }
   | left=exp2 PLUS right=exp2
-    { CallExp (ref T.Undef,
-	       (VarExp (S.symbol "+",$startpos)),
+    { CallExp ((VarExp (S.symbol "+",$startpos)),
 	       [left;right], $startpos) }
   | left=exp2 MINUS right=exp2
-    { CallExp (ref T.Undef,
-	       (VarExp (S.symbol "-",$startpos)),
+    { CallExp ((VarExp (S.symbol "-",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 MUL right=exp2
-    { CallExp (ref T.Undef,
-	       (VarExp (S.symbol "*",$startpos)),
+    { CallExp ((VarExp (S.symbol "*",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 DIV right=exp2
-    { CallExp (ref T.Undef,
-	       (VarExp (S.symbol "/",$startpos)),
+    { CallExp ((VarExp (S.symbol "/",$startpos)),
 	       [left;right],$startpos) }
   | left=exp2 DEQ right=exp2
-    { CallExp (ref T.Undef,
-	       (VarExp (S.symbol "==",$startpos)),
+    { CallExp ((VarExp (S.symbol "==",$startpos)),
 	       [left;right],$startpos) }
   | LET v=id EQ e=exp2 IN b=exp2
     { LetExp (v,e,b,$startpos) }
@@ -99,9 +93,9 @@ exp2:
   | LPAREN RPAREN
     { UnitExp ($startpos) }
   | exp LPAREN RPAREN
-    { CallExp (ref T.Undef,$1,[],$startpos) }
+    { CallExp ($1,[],$startpos) }
   | exp nonempty_list(exp)
-    { CallExp (ref T.Undef,$1,$2,$startpos) }
+    { CallExp ($1,$2,$startpos) }
   | exp
     { $1 }
 

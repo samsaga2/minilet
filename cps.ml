@@ -16,7 +16,7 @@ let rec convert_exp_m exp =
    | BoolExp _
    | VarExp _ ->
       exp
-   | CallExp (typ,sym,exps,pos) ->
+   | CallExp (sym,exps,pos) ->
       let ksym = S.new_symbol () in
       let k = VarExp (ksym,pos) in
       let exp = convert_exp_t exp k in
@@ -37,13 +37,13 @@ and convert_exp_t exp k =
   | VarExp (_,pos)
   | LambdaExp (_,_,pos) ->
      let exp = convert_exp_m exp in
-     CallExp (ref T.Undef,k,[exp],pos)
-  | CallExp (typ,fnexp,bodyexps,pos) ->
+     CallExp (k,[exp],pos)
+  | CallExp (fnexp,bodyexps,pos) ->
      let rec make exps args =
        match exps with
        | [] ->
 	  let args = args@[k] in
-	  CallExp (ref T.Undef,fnexp,args,pos)
+	  CallExp (fnexp,args,pos)
        | hd::tl ->
 	  let ksym = S.new_symbol () in
 	  let k = VarExp (ksym,pos) in
