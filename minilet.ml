@@ -4,6 +4,7 @@ let compile in_buffer =
   let ast = Desugar.desugar ast in
   let ast = Cps.convert ast in
   let ast = Alpha.equivalence ast in
+  let ast = Beta.reduce ast in
   Semant.semant ast;
   print_endline (Astcore.pprint ast)
 
